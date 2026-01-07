@@ -4,7 +4,8 @@ void usage(const char *program_name);
 
 int main(int argc, char *argv[]) {
     struct bloom bloom;
-    std::string subject;
+    char *subject = NULL;
+    size_t subject_length;
     PCRE2_SPTR substring_start;
     PCRE2_SIZE substring_length;
     PCRE2_UCHAR error_buffer[ERROR_BUFFER_SIZE];
@@ -15,30 +16,25 @@ int main(int argc, char *argv[]) {
     }
 
     const PCRE2_SPTR pattern = (PCRE2_SPTR)argv[1];
-    if (!gruniq::io::read_file(argv[2], subject)) {
-        GRUNIQ_LOGE("failed to read \'%s\' file\n", argv[2]);
+    if (! (subject = sth_io_file_read_all(argv[2], &subject_length))) {
+        fprintf(stderr, "failed to read \'%s\' file\n", argv[2]);
         return 1;
     }
 
-    gruniq::regexp::Matcher matcher{
-        pattern,
-        (PCRE2_SPTR)subject.c_str(),
-        subject.size()
-    };
-
-    if (matcher.has_error()) {
-        matcher.error_info(error_buffer, sizeof(error_buffer));
-        GRUNIQ_LOGE("failed to initialize matcher (%d): error at offset %zu: %s\n",
-                 matcher.error_code, matcher.error_offset, error_buffer);
+    Matcher matcher;
+    if (!matcher_init(&matcher, pattern, subject, subject_length)) {
+        matcher_error_info(&matcher, error_buffer, sizeof(error_buffer));
+        fprintf(stderr, "failed to initialize matcher (%d): error at offset %zu: %s\n",
+                matcher.error_code, matcher.error_offset, error_buffer);
         return 1;
     }
 
     if (bloom_init(&bloom, (1<<20), 0.01f)) {
-        GRUNIQ_LOGE("failed to initialize bloom filter\n");
+        fprintf(stderr, "failed to initialize bloom filter\n");
         return 1;
     }
 
-    while (matcher.next(&substring_start, &substring_length)) {
+    while (matcher_next(&matcher, &substring_start, &substring_length)) {
         // filter unique matches with bloom filter
         if (!bloom_check(&bloom, substring_start, (int)substring_length)) {
             bloom_add(&bloom, substring_start, (int)substring_length);
