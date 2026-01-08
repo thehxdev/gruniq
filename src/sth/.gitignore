@@ -1,0 +1,7 @@
+a.out
+*.o*
+*.so*
+*.a*
+tags
+TAGS
+compile_flags.txt

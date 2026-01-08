@@ -30,14 +30,14 @@ int matcher_init(Matcher *matcher,
         return 0;
 
     pcre2_jit_compile(re_code, REGEXP_PCRE2_JIT_OPTIONS);
-    matcher->match_data = pcre2_match_data_create_from_pattern(re_code, STH_NULL);
+    matcher->match_data = pcre2_match_data_create_from_pattern(re_code, NULL);
 
     pcre2_jit_stack *jit_stack = pcre2_jit_stack_create(REGEXP_PCRE2_JIT_STACK_START_SIZE,
                                                         REGEXP_PCRE2_JIT_STACK_MAX_SIZE,
-                                                        STH_NULL);
+                                                        NULL);
 
-    matcher->match_context = pcre2_match_context_create(STH_NULL);
-    pcre2_jit_stack_assign(matcher->match_context, STH_NULL, jit_stack);
+    matcher->match_context = pcre2_match_context_create(NULL);
+    pcre2_jit_stack_assign(matcher->match_context, NULL, jit_stack);
 
     matcher->re_code = re_code;
     return 1;
