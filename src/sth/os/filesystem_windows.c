@@ -2,6 +2,10 @@
 extern "C" {
 #endif
 
+int sth_os_file_size(const char *path, size_t *size_out) {
+    // TODO: sth_os_file_size for windows platform
+}
+
 int sth_os_file_exists(const char *path) {
     DWORD dwAttrib = GetFileAttributesA(path);
     return dwAttrib != INVALID_FILE_ATTRIBUTES;

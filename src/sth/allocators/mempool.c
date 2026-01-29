@@ -2,8 +2,13 @@
 extern "C" {
 #endif
 
+union sth_mempool_node {
+    sth_mempool_node_t *next;
+};
+
 void sth_mempool_init(sth_mempool_t *self, sth_arena_t *arena, size_t size) {
-    size = (size >= sizeof(union __sth_mempool_node)) ? size : sizeof(union __sth_mempool_node);
+    if (size < sizeof(sth_mempool_node_t))
+        size = sizeof(sth_mempool_node_t);
     *self = (sth_mempool_t){
         .arena = arena,
         .list = NULL,
@@ -12,7 +17,7 @@ void sth_mempool_init(sth_mempool_t *self, sth_arena_t *arena, size_t size) {
 }
 
 void *sth_mempool_get(sth_mempool_t *self) {
-    union __sth_mempool_node *c;
+    sth_mempool_node_t *c;
     if (!self->list)
         return sth_arena_alloc(self->arena, self->size);
     c = self->list;
@@ -21,7 +26,7 @@ void *sth_mempool_get(sth_mempool_t *self) {
 }
 
 void sth_mempool_put(sth_mempool_t *self, void *v) {
-    union __sth_mempool_node *c = (union __sth_mempool_node*) v;
+    sth_mempool_node_t *c = STH_BASE_DECLTYPE(c) v;
     c->next = self->list;
     self->list = c;
 }

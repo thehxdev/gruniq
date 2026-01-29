@@ -48,7 +48,7 @@
 
 #define sth_ds_da_last(da) (da)->items[(STH_BASE_ASSERT((da)->len > 0), (da)->len-1)]
 
-#define sth_ds_da_remove_unordered(da, i) \
+#define sth_ds_da_del(da, i) \
     do { \
         size_t _idx_ = (i); \
         STH_BASE_ASSERT(_idx_ < (da)->len); \
@@ -58,5 +58,15 @@
 
 #define sth_ds_da_free(da) STH_BASE_FREE((da)->items)
 
+#ifdef STH_STRIP_PREFIXES
+    #define da_init         sth_ds_da_init
+    #define da_reserve      sth_ds_da_reserve
+    #define da_append       sth_ds_da_append
+    #define da_append_many  sth_ds_da_append_many
+    #define da_resize       sth_ds_da_resize
+    #define da_last         sth_ds_da_last
+    #define da_del          sth_ds_da_del
+    #define da_free         sth_ds_da_free
+#endif // STH_STRIP_PREFIXES
 
 #endif // _STH_DS_DYNAMIC_ARRAY_H_

@@ -29,14 +29,34 @@
      ? ((rb)->write += 1, (rb)->items[sth_ds_ring_buffer_mask((rb)->cap, (rb)->write)] = (item), STH_OK) \
      : STH_FAILED)
 
-#define sth_ds_ring_buffer_shift(rb) \
+// Get first item and advance `read` pointer
+#define sth_ds_ring_buffer_advance(rb) \
     ((!sth_ds_ring_buffer_is_empty((rb))) \
      ? ((rb)->read += 1, (rb)->items[sth_ds_ring_buffer_mask((rb)->cap, (rb)->read)], STH_OK) \
      : STH_FAILED)
 
-#define sth_ds_ring_buffer_shift_out(rb, out) \
+// Get first item, store it in `out` parameter and advance `read` pointer
+#define sth_ds_ring_buffer_advance_out(rb, out) \
     ((!sth_ds_ring_buffer_is_empty((rb))) \
      ? ((rb)->read += 1, (out) = (rb)->items[sth_ds_ring_buffer_mask((rb)->cap, (rb)->read)], STH_OK) \
      : STH_FAILED)
+
+// Get first item without advancing
+#define sth_ds_ring_buffer_peek(rb) \
+    ((rb)->items[sth_ds_ring_buffer_mask((rb)->cap, (rb)->read + 1)])
+
+
+#ifdef STH_STRIP_PREFIX
+    #define ring_buffer_mask        sth_ds_ring_buffer_mask
+    #define ring_buffer_init        sth_ds_ring_buffer_init
+    #define ring_buffer_is_empty    sth_ds_ring_buffer_is_empty
+    #define ring_buffer_is_full     sth_ds_ring_buffer_is_full
+    #define ring_buffer_size        sth_ds_ring_buffer_size
+    #define ring_buffer_push        sth_ds_ring_buffer_push
+    #define ring_buffer_push        sth_ds_ring_buffer_push
+    #define ring_buffer_advance     sth_ds_ring_buffer_advance
+    #define ring_buffer_advance_out sth_ds_ring_buffer_advance_out
+    #define ring_buffer_peek        sth_ds_ring_buffer_peek
+#endif // STH_STRIP_PREFIXES
 
 #endif // _STH_DS_RING_BUFFER_H_

@@ -5,13 +5,11 @@
 extern "C" {
 #endif
 
-union __sth_mempool_node {
-    union __sth_mempool_node *next;
-};
+typedef union sth_mempool_node sth_mempool_node_t;
 
 typedef struct {
     sth_arena_t *arena;
-    union __sth_mempool_node *list;
+    sth_mempool_node_t *list;
     size_t size;
 } sth_mempool_t;
 
