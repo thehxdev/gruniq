@@ -21,7 +21,7 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
-    Matcher matcher;
+    Matcher matcher = { 0 };
     if (!matcher_init(&matcher, pattern, subject, subject_length)) {
         matcher_error_info(&matcher, error_buffer, sizeof(error_buffer));
         fprintf(stderr, "failed to initialize matcher (%d): error at offset %zu: %s\n",
@@ -42,6 +42,7 @@ int main(int argc, char *argv[]) {
         }
     }
 
+    matcher_deinit(&matcher);
     return 0;
 }
 

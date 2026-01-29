@@ -16,6 +16,10 @@ int matcher_init(Matcher *matcher,
                  PCRE2_SPTR subject,
                  PCRE2_SIZE subject_length)
 {
+    matcher->pattern = pattern;
+    matcher->subject = subject;
+    matcher->subject_length = subject_length;
+
     pcre2_code *re_code;
     re_code = pcre2_compile(
         pattern,
